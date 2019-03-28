@@ -27,31 +27,29 @@ var drawChart = function(data)
  var day = 7;
 
 
-  var m_data = data.map(function(d) { return d.quizes[day+1].grade; });
 
 
   //create scales
   var xScale = d3.scaleLinear()
-                .domain([0,100])
+                .domain([0,10])
+                .nice()
                 .range([0,width]);
+
   var binMaker = d3.histogram()
                 .domain([xScale.domain()])
-                .thresholds(xScale.ticks(50));
+                .thresholds(xScale.ticks(10));
 
-  var bins=binMaker(data);
-  console.log('bins',bins);
 
+
+  var m_data = data.map(function(d){return d.quizes[day+1].grade;});
+  var bins = binMaker(m_data);
+  bins.shift();
+  bins.pop();
+    console.log('bins',bins);
   var yScale = d3.scaleLinear()
                 .domain([0,d3.max(bins,function(d){return d.length})])
-                .range([height,0]);
-
-
-
-
-
-
-
-
+                .range([height,0])
+                .nice();
 
   var svg = d3.select("svg").attr("width",width)
                             .attr("height",height);
@@ -72,7 +70,7 @@ var drawChart = function(data)
           .attr('height',function(d)
           {
             return height - yScale(d.length);
-          })
+          });
 
 
 
