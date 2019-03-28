@@ -23,8 +23,9 @@ var drawChart = function(data)
   }
   var width = screen.width-margins.left-margins.right;
   var height = screen.height-margins.top-margins.bottom;
+  var barWidth = 100;
 
- var day = 7;
+ var day = 0;
 
 
 
@@ -36,16 +37,16 @@ var drawChart = function(data)
                 .range([0,width]);
 
   var binMaker = d3.histogram()
-                .domain([xScale.domain()])
-                .thresholds(xScale.ticks(10));
+                .domain(xScale.domain())
+                .thresholds(xScale.ticks(4));
 
 
 
-  var m_data = data.map(function(d){return d.quizes[day+1].grade;});
+  var m_data = data.map(function(d){return d.quizes[day].grade;});
   var bins = binMaker(m_data);
-  bins.shift();
-  bins.pop();
-    console.log('bins',bins);
+
+
+    console.log(m_data,bins);
   var yScale = d3.scaleLinear()
                 .domain([0,d3.max(bins,function(d){return d.length})])
                 .range([height,0])
@@ -63,18 +64,43 @@ var drawChart = function(data)
           .data(bins)
           .enter()
           .append("rect")
-          .attr("x",function(d) {return xScale(d.x0);})
-          .attr("width",function(d)
-          {return xScale(d.x1-.1)-xScale(d.x0);})
+          .attr("x",function(d,i) {return i*barWidth;})
+          .attr("width",barWidth)
           .attr("y",function(d){return yScale(d.length);})
           .attr('height',function(d)
           {
             return height - yScale(d.length);
           });
+    var buttons =
+              d3.selectAll('button')
+               .on('click',function()
+               {
+                  var clicked = this.name;
+                   updateChart(data,clicked,binMaker,plotLand,height,yScale,barWidth);
+                });
 
 
+};
+
+var updateChart = function(data,clicked,binMaker,plotLand,h,yScale,barWidth)
+{
 
 
+    //do something
+    var dd = parseInt(clicked)-1;
+    var m_data = data.map(function(d){return d.quizes[dd].grade;});
+    var bins = binMaker(m_data);
+    plotLand.selectAll('rect')
+        .data(bins)
+        .attr("width",barWidth)
+        .attr('y', function(d)
+        {
+        return  yScale(d.length);
+        })
+        .attr('height',function(d)
+        {
+          return h - yScale(d.length);
+        });
 
 
-}
+  };
