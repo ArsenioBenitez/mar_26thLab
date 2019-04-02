@@ -10,7 +10,7 @@ var drawChart = function(data)
 
   var screen =
   {
-    width: 500,
+    width: 740,
     height: 400
   }
 
@@ -54,11 +54,10 @@ var drawChart = function(data)
 
   var svg = d3.select("svg").attr("width",width)
                             .attr("height",height);
-  svg.append('g').call(d3.axisLeft(yScale));
-  svg.append('g').attr("transform","translate(0,"+height+")").call(d3.axisBottom(xScale));
+  svg.append('g').attr("transform","translate(100,"+height+")");
   var plotLand = svg.append('g')
                     .classed("plot",true)
-                    .attr("transform","translate("+margins.left+","+margins.top+")");
+                    .attr("transform","translate(100,"+0+")");
 
   plotLand.selectAll('rect')
           .data(bins)
@@ -78,6 +77,10 @@ var drawChart = function(data)
                   var clicked = this.name;
                    updateChart(data,clicked,binMaker,plotLand,height,yScale,barWidth);
                 });
+    var yAxis = d3.axisLeft(yScale);
+    svg.append('g').classed('yAxis',true)
+                  .call(yAxis)
+                  .attr('transform','translate('+90+','+0+')');
 
 
 };
